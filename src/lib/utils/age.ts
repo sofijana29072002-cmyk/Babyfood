@@ -57,11 +57,11 @@ export function formatBabyAge(birthdate: string | null): string {
 }
 
 function formatDays(days: number): string {
-  if (days % 100 >= 11 && days % 100 <= 19) return `${days} дней`
-  const last = days % 10
-  if (last === 1) return `${days} день`
-  if (last >= 2 && last <= 4) return `${days} дня`
-  return `${days} дней`
+  if (days % 100 >= 11 && days % 100 <= 19) return 'дней'
+const last = days % 10
+if (last === 1) return 'день'
+if (last >= 2 && last <= 4) return 'дня'
+return 'дней'
 }
 
 function formatMonths(months: number): string {
