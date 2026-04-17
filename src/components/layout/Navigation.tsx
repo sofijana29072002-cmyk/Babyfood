@@ -2,13 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Apple, BookOpen, CalendarDays, ShoppingCart, NotebookText } from 'lucide-react'
+import { Home, Apple, BookOpen, CalendarDays, ShoppingCart, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
 const navItems = [
   { href: '/dashboard', label: 'Главная', icon: Home },
   { href: '/products', label: 'Продукты', icon: Apple },
-  { href: '/diary', label: 'Дневник', icon: NotebookText },
+  { href: '/diary', label: 'Дневник', icon: FileText },
   { href: '/recipes', label: 'Рецепты', icon: BookOpen },
   { href: '/meal-plan', label: 'План', icon: CalendarDays },
 ]
