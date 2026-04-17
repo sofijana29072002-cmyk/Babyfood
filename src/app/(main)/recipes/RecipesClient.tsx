@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Search, X, Clock, ChefHat, Heart, ArrowLeft } from 'lucide-react'
 import { Recipe, MealType, MEAL_EMOJIS } from '@/types'
 import { createClient } from '@/lib/supabase/client'
@@ -58,7 +57,7 @@ export function RecipesClient({ recipes, favoriteIds: initialFavorites, babyAge,
       setFavorites(prev => { const s = new Set(prev); s.delete(recipeId); return s })
     } else {
       await supabase.from('favorites').insert({ user_id: userId, recipe_id: recipeId })
-      setFavorites(prev => new Set([...prev, recipeId]))
+      setFavorites(prev => { const s = new Set(prev); s.add(recipeId); return s })
     }
     setSaving(null)
   }
@@ -153,11 +152,8 @@ export function RecipesClient({ recipes, favoriteIds: initialFavorites, babyAge,
       {/* Recipe grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {filteredRecipes.map((recipe, i) => (
-          <motion.div
+          <div
             key={recipe.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.03 }}
             className="bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden"
           >
             <div className="p-4 cursor-pointer" onClick={() => setSelectedRecipe(recipe)}>
@@ -184,7 +180,7 @@ export function RecipesClient({ recipes, favoriteIds: initialFavorites, babyAge,
                 <span className="flex items-center gap-1"><ChefHat className="w-3 h-3" />{recipe.servings} порц.</span>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -214,11 +210,7 @@ function RecipeDetail({
   onBack: () => void
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="max-w-2xl mx-auto"
-    >
+    <div className="max-w-2xl mx-auto">
       {/* Top bar */}
       <div className="flex items-center justify-between p-4 md:p-6">
         <button
@@ -302,6 +294,6 @@ function RecipeDetail({
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
