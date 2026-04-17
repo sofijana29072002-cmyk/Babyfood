@@ -23,7 +23,6 @@ export default async function RecipesPage() {
   const { data: recipes } = await supabase
     .from('recipes')
     .select('*')
-    .lte('min_age_months', babyAge)
     .order('min_age_months', { ascending: true })
     .order('title', { ascending: true })
 
