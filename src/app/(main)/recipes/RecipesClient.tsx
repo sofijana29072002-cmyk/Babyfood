@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Search, X, Clock, ChefHat, Heart, ArrowLeft } from 'lucide-react'
+import { Search, X, Clock, ChefHat, Heart, ArrowLeft, Share2, Youtube } from 'lucide-react'
 import { Recipe, MealType, MEAL_EMOJIS } from '@/types'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -209,6 +209,19 @@ function RecipeDetail({
   onFavoriteToggle: (id: string) => void
   onBack: () => void
 }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleShare = async () => {
+    const text = `${recipe.emoji} ${recipe.title} — рецепт из приложения Малыш Ест`
+    if (navigator.share) {
+      await navigator.share({ title: recipe.title, text })
+    } else {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
   return (
     <div className="max-w-2xl mx-auto">
       {/* Top bar */}
@@ -219,17 +232,26 @@ function RecipeDetail({
         >
           <ArrowLeft className="w-4 h-4" /> Назад
         </button>
-        <button
-          onClick={() => onFavoriteToggle(recipe.id)}
-          className={`p-2 rounded-xl transition-colors ${isFavorite ? 'text-red-500' : 'text-gray-400 hover:text-red-400'}`}
-        >
-          <Heart className="w-5 h-5" fill={isFavorite ? 'currentColor' : 'none'} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleShare}
+            className="p-2 rounded-xl text-muted-foreground hover:text-primary hover:bg-muted transition-colors"
+            title="Поделиться"
+          >
+            {copied ? <span className="text-xs text-green-600">✓ Скопировано</span> : <Share2 className="w-5 h-5" />}
+          </button>
+          <button
+            onClick={() => onFavoriteToggle(recipe.id)}
+            className={`p-2 rounded-xl transition-colors ${isFavorite ? 'text-red-500' : 'text-gray-400 hover:text-red-400'}`}
+          >
+            <Heart className="w-5 h-5" fill={isFavorite ? 'currentColor' : 'none'} />
+          </button>
+        </div>
       </div>
 
       <div className="px-4 md:px-6 space-y-5">
         {/* Hero */}
-        <div className="bg-white rounded-3xl p-5 border border-border">
+        <div className="bg-card rounded-3xl p-5 border border-border">
           <div className="flex items-start gap-4">
             <span className="text-5xl">{recipe.emoji}</span>
             <div>
@@ -263,8 +285,24 @@ function RecipeDetail({
           )}
         </div>
 
+        {/* YouTube */}
+        {(recipe as any).youtube_url && (
+          <a
+            href={(recipe as any).youtube_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 bg-red-50 dark:bg-red-900/20 rounded-2xl p-4 border border-red-100 dark:border-red-900/30 hover:opacity-80 transition-opacity"
+          >
+            <Youtube className="w-6 h-6 text-red-600 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-red-700 dark:text-red-400">Видео-инструкция</p>
+              <p className="text-xs text-red-500">Смотреть на YouTube</p>
+            </div>
+          </a>
+        )}
+
         {/* Ingredients */}
-        <div className="bg-white rounded-3xl p-5 border border-border">
+        <div className="bg-card rounded-3xl p-5 border border-border">
           <h2 className="font-bold text-base mb-3">🛒 Ингредиенты</h2>
           <div className="space-y-2">
             {recipe.ingredients.map((ing, i) => (
@@ -280,7 +318,7 @@ function RecipeDetail({
         </div>
 
         {/* Instructions */}
-        <div className="bg-white rounded-3xl p-5 border border-border">
+        <div className="bg-card rounded-3xl p-5 border border-border">
           <h2 className="font-bold text-base mb-4">👩‍🍳 Приготовление</h2>
           <div className="space-y-4">
             {recipe.instructions.map((step, i) => (
